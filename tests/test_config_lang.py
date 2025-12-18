@@ -6,7 +6,7 @@ import unittest
 from config_lang import LexError, ParseError, parse_config
 
 
-class ConfigLangBasicTests(unittest.TestCase):
+class TestConfigLangBasic(unittest.TestCase):
     def test_number_zero_and_octal(self) -> None:
         src = "a = 0\nb = 0o10\nc = 0007\n"
         result = parse_config(src)
@@ -76,7 +76,7 @@ class ConfigLangBasicTests(unittest.TestCase):
             parse_config(src)
 
 
-class ExampleConfigsTests(unittest.TestCase):
+class TestExampleConfigs(unittest.TestCase):
     def _read_example(self, name: str) -> str:
         base = os.path.dirname(os.path.dirname(__file__))
         path = os.path.join(base, "examples", name)

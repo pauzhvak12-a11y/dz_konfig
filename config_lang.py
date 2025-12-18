@@ -49,12 +49,14 @@ GRAMMAR = r"""
 
     dict_item: IDENT ":=" expr ";"             -> dict_pair
 
-    NUMBER: "0" | "0" ("o"|"O"|"0") ("0".."7")+
+    // Числа: 0 или восьмеричные с опциональным префиксом o/O, допускаем лидирующие нули.
+    NUMBER: "0" | "0" ("o"|"O")? ("0".."7")+
     IDENT: /[a-z][a-z0-9_]*/
 
-    COMMENT: "{{!" /(.|\\n)*?/ "}}"
+    COMMENT: /{{![\s\S]*?}}/
 
-    %ignore /[ \t\f\r\n]+/
+    %import common.WS
+    %ignore WS
     %ignore COMMENT
 """
 
@@ -101,7 +103,11 @@ def _number_value(lexeme: str) -> int:
     """Преобразует лексему числа в целое значение."""
     if lexeme == "0":
         return 0
-    digits = lexeme[2:]  # отбрасываем 0o/00/0O
+    # если второй символ o/O — отбрасываем префикс, иначе берём всё после ведущего нуля
+    if len(lexeme) >= 2 and lexeme[1] in ("o", "O"):
+        digits = lexeme[2:]
+    else:
+        digits = lexeme[1:]
     return int(digits, 8)
 
 
